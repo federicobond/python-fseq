@@ -2,7 +2,7 @@ import os
 from fseq import parse
 
 
-def test_main():
+def test_parse():
     path = os.path.join(os.path.dirname(__file__), 'test.fseq')
     fseq_obj = parse(open(path, 'rb'))
 
@@ -13,12 +13,16 @@ def test_main():
     assert fseq_obj.number_of_frames == 9563
     assert fseq_obj.step_time_in_ms == 25
     assert fseq_obj.compression_type == 'zstd'
-    assert fseq_obj.unique_id == b'\xb0\xf2\xb8\xb3g\x82\x05\x00'
+    assert fseq_obj.unique_id == b'\xb1,t\x15\xb9\x82\x05\x00'
     assert fseq_obj.variable_headers == [
         ('mf', b'/Users/nico/Domencia/multimedia files/the-chemical-brothers-star-guitar.mp3\0')
     ]
-    assert len(fseq_obj.compression_blocks) > 0
+    assert len(fseq_obj.frame_offsets) > 0
     assert fseq_obj.sparse_ranges == []
 
+    assert fseq_obj.frame_offsets[27] == (998, 884415)
+    assert fseq_obj.frame_offsets[28] == (1036, 922791)
 
-    assert fseq_obj.frame_at(0) is not None
+    frame = fseq_obj.get_frame(1000)
+    expected_frame_start = [0,0,0,255,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,255,255,255,0,0,0,0,0,0,0,0,0,255,255,255,0,0,0,0,0,0,255,255,255,255,255,255,0,0,0,0,0,0,255,255,255,255,255,255,255,255,255]
+    assert frame[:len(expected_frame_start)] == expected_frame_start

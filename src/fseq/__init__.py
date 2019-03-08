@@ -34,7 +34,7 @@ class Fseq:
             step_time_in_ms,
             unique_id,
             compression_type,
-            compression_blocks,
+            frame_offsets,
             sparse_ranges,
             variable_headers):
 
@@ -49,18 +49,42 @@ class Fseq:
         self.step_time_in_ms = step_time_in_ms
         self.unique_id = unique_id
         self.compression_type = compression_type
-        self.compression_blocks = compression_blocks
+        self.frame_offsets = frame_offsets
         self.sparse_ranges = sparse_ranges
         self.variable_headers = variable_headers
 
-    def frame_at(self, index):
-        if index >= self.number_of_frames:
+    def get_frame(self, frame):
+        if frame >= self.number_of_frames:
             raise ValueError('frame index out of bounds')
 
-        offset = self.channel_data_start + index * self.channel_count_per_frame
+        curblock = 0
+        while frame >= self.frame_offsets[curblock + 1][0]:
+            curblock += 1
+
+        offset = self.frame_offsets[curblock][1]
         self.file.seek(offset, 0)
-        # data = self.file.read(self.channel_count_per_frame)
-        # return [b for b in data]
+
+        dctx = zstd.ZstdDecompressor()
+
+        length = self.frame_offsets[curblock + 1][1] - self.frame_offsets[curblock][1]
+        block = self.file.read(length)
+        block = dctx.stream_reader(block).readall()
+
+        fidx = (frame - self.frame_offsets[curblock][0]) * self.channel_count_per_frame
+        data = block[fidx:fidx+self.channel_count_per_frame]
+        return [b for b in data]
+
+    def _expand_sparse_ranges(self, data):
+        if not self.sparse_ranges:
+            return data
+
+        # not really sure whats going on here
+        buf = io.BytesIO()
+        for (start, size) in self.sparse_ranges:
+            buf.write(data[start:start+size])
+
+        return buf.getvalue()
+
 
 
 def parse(f):
@@ -99,12 +123,15 @@ def parse(f):
 
     unique_id = f.read(8)
 
-    compression_blocks = []
+    offset = channel_data_start
+    frame_offsets = []
     for i in range(num_compression_blocks):
         frame_number = int_from_bytes(f.read(4))
         length_of_block = int_from_bytes(f.read(4))
-        compression_blocks.append((frame_number, length_of_block))
 
+        if length_of_block > 0:
+            frame_offsets.append((frame_number, offset))
+            offset += length_of_block
 
     sparse_ranges = []
     for i in range(num_sparse_ranges):
@@ -136,7 +163,7 @@ def parse(f):
         step_time_in_ms=step_time_in_ms,
         unique_id=unique_id,
         compression_type=compression_type,
-        compression_blocks=compression_blocks,
+        frame_offsets=frame_offsets,
         sparse_ranges=sparse_ranges,
         variable_headers=variable_headers,
     )
