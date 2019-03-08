@@ -14,7 +14,7 @@ def int_from_bytes(bytes):
 
 def compression_type_from_num(n):
     if n == 0:
-        return None
+        return 'none'
     if n == 1:
         return 'zstd'
     if n == 2:
@@ -75,22 +75,15 @@ class Fseq:
         return [b for b in data]
 
     def _expand_sparse_ranges(self, data):
-        if not self.sparse_ranges:
-            return data
-
-        # not really sure whats going on here
-        buf = io.BytesIO()
-        for (start, size) in self.sparse_ranges:
-            buf.write(data[start:start+size])
-
-        return buf.getvalue()
+        # TODO
+        pass
 
 
 
 def parse(f):
     magic = f.read(4)
     if magic != b'PSEQ':
-        raise ParserError('invalid fseq file magic')
+        raise ParserError('invalid fseq file magic: %s', magic)
 
     channel_data_start = int_from_bytes(f.read(2))
 
@@ -114,6 +107,9 @@ def parse(f):
         raise ParserError('unrecognized bit flags: %d' % bit_flags)
 
     compression_type = compression_type_from_num(int_from_bytes(f.read(1)))
+    if compression_type != 'zstd':
+        raise ParserError('unsupported compression type: %s' % compression_type)
+
     num_compression_blocks = int_from_bytes(f.read(1))
     num_sparse_ranges = int_from_bytes(f.read(1))
 

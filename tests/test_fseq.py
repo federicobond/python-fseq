@@ -26,3 +26,9 @@ def test_parse():
     frame = fseq_obj.get_frame(1000)
     expected_frame_start = [0,0,0,255,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,255,255,255,0,0,0,0,0,0,0,0,0,255,255,255,0,0,0,0,0,0,255,255,255,255,255,255,0,0,0,0,0,0,255,255,255,255,255,255,255,255,255]
     assert frame[:len(expected_frame_start)] == expected_frame_start
+
+
+def test_examples():
+    for example in ('test2.fseq', 'test3.fseq', 'test4.fseq'):
+        path = os.path.join(os.path.dirname(__file__), example)
+        parse(open(path, 'rb'))
