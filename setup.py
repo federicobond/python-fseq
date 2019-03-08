@@ -20,7 +20,7 @@ def read(*names, **kwargs):
     with io.open(
         join(dirname(__file__), *names),
         encoding=kwargs.get('encoding', 'utf8')
-    ) as fh:
+    ) as fh:0j
         return fh.read()
 
 
@@ -29,10 +29,8 @@ setup(
     version='0.1.0',
     license='MIT license',
     description='A fseq sequence file parser.',
-    long_description='%s\n%s' % (
-        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
-        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
-    ),
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     author='Federico Bond',
     author_email='federicobond@gmail.com',
     url='https://github.com/federicobond/python-fseq',
@@ -61,7 +59,7 @@ setup(
         'Topic :: Utilities',
     ],
     project_urls={
-        'Changelog': 'https://github.com/federicobond/python-fseq/blob/master/CHANGELOG.rst',
+        'Changelog': 'https://github.com/federicobond/python-fseq/blob/master/CHANGELOG.md',
         'Issue Tracker': 'https://github.com/federicobond/python-fseq/issues',
     },
     keywords=[
