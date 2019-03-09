@@ -9,24 +9,24 @@ As such it may not reflect exactly the intentions of the original author.
 
 All numbers are encoded little endian.
 
-## File header
+## File header
 
 | Bytes | Description                                                        |
 | ----- | ------------------------------------------------------------------ |
-| 0-3   | Magic file identifier, must be 'PSEQ'                              |
-| 4-5   | Offset to the start of channel data                                |
-| 6     | Minor version, should be 0                                         |
-| 7     | Major version, should be 2                                         |
-| 8-9   | Standard header length/index to first variable header              |
-| 10-13 | Channel count per frame (\*)                                       |
-| 14-17 | Number of frames                                                   |
-| 18    | Step time in ms, usually 25 or 50                                  |
-| 19    | Bit flags/reserved should be 0                                     |
-| 20    | Compression type 0 for uncompressed, 1 for zstd, 2 for libz/gzip   |
-| 21    | Number of compression blocks, 0 if uncompressed                    |
-| 22    | Number of sparse ranges, 0  if none                                |
-| 23    | Bit flags/reserved, unused right now, should be 0                  |
-| 24-31 | 64-bit unique identifier, likely a timestamp or uuid               |
+| 0-3   | Magic file identifier, must be 'PSEQ'                              |
+| 4-5   | Offset to the start of channel data                                |
+| 6     | Minor version, should be 0                                         |
+| 7     | Major version, should be 2                                         |
+| 8-9   | Standard header length/index to first variable header              |
+| 10-13 | Channel count per frame (\*)                                       |
+| 14-17 | Number of frames                                                   |
+| 18    | Step time in ms, usually 25 or 50                                  |
+| 19    | Bit flags/reserved should be 0                                     |
+| 20    | Compression type 0 for uncompressed, 1 for zstd, 2 for libz/gzip   |
+| 21    | Number of compression blocks, 0 if uncompressed                    |
+| 22    | Number of sparse ranges, 0  if none                                |
+| 23    | Bit flags/reserved, unused right now, should be 0                  |
+| 24-31 | 64-bit unique identifier, likely a timestamp or uuid               |
 
 ## Compressed block index
 
@@ -41,8 +41,8 @@ of the block.
 
 | Bytes | Description     |
 | ----- | --------------- |
-| 0-3   | Frame number    |
-| 4-7   | Length of block |
+| 0-3   | Frame number    |
+| 4-7   | Length of block |
 
 ## Sparse ranges
 
@@ -51,5 +51,5 @@ is defined by a start channel number and a number of channels.
 
 | Bytes | Description          |
 | ----- | -------------------- |
-| 0-2   | Start channel number |
-| 3-5   | Number of channels   |
+| 0-2   | Start channel number |
+| 3-5   | Number of channels   |
