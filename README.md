@@ -1,7 +1,7 @@
 python-fseq
 ===========
 
-A fseq sequence file parser.
+A Falcon Pi Player fseq (v2) sequence file parser.
 
 ### Installation
 
@@ -13,7 +13,9 @@ A fseq sequence file parser.
 To use the project:
 
     import fseq
-    fseq.longest()
+
+    f = open('filename.fseq')
+    fseq.parse(f)
 
 
 ### Development
