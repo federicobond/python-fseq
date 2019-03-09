@@ -20,7 +20,7 @@ def read(*names, **kwargs):
     with io.open(
         join(dirname(__file__), *names),
         encoding=kwargs.get('encoding', 'utf8')
-    ) as fh:0j
+    ) as fh:
         return fh.read()
 
 
