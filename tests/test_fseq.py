@@ -25,7 +25,7 @@ def test_parse():
 
     frame = fseq_obj.get_frame(1000)
     expected_frame_start = [0,0,0,255,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,255,255,255,0,0,0,0,0,0,0,0,0,255,255,255,0,0,0,0,0,0,255,255,255,255,255,255,0,0,0,0,0,0,255,255,255,255,255,255,255,255,255]
-    assert frame[:len(expected_frame_start)] == expected_frame_start
+    assert [d for d in frame[:len(expected_frame_start)]] == expected_frame_start
 
 
 def test_examples():
