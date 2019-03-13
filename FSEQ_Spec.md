@@ -30,10 +30,11 @@ All numbers are encoded little endian.
 
 ## Compressed block index
 
-If the files is compressed, a sequence of tuples containing the compression
-index will follow. Each tuple contains the index of the first compressed frame
-in the block and its size. To access a frame data, look for last block with a
-frame number smaller than the frame you want and decompress it. Then advance
+If the file is compressed, a sequence of tuples containing the compression
+index will follow. Multiple frames are compressed together into a single block.
+Each tuple contains the index of the first compressed framei in the block and
+its byte size. To access the frame data, look for last block with a frame
+number smaller than the frame you want and decompress it. Then advance
 the pointer N times by the number of channels in each block, where N is the
 difference between the frame index you want and the frame index at the start
 of the block.
