@@ -32,7 +32,10 @@ The `parse` function returns a `Fseq` object with the following properties:
  * `variable_headers`: an array of 2-tuples containing key-value pairs describing additional headers for the sequence file
 
 To access a single frame data use the `get_frame(index)` method on the `Fseq`
-object.
+object. Use index access to read channel values:
+
+    frame = fseq_file.get_frame(index)
+    value = frame[channel_num]
 
 
 ### Development
