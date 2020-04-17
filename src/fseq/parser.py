@@ -126,6 +126,7 @@ def parse(f):
         if length_of_block > 0:
             frame_offsets.append((frame_number, offset))
             offset += length_of_block
+    frame_offsets.append((number_of_frames, offset))
 
     sparse_ranges = []
     for i in range(num_sparse_ranges):
