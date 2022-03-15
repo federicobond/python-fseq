@@ -1,5 +1,3 @@
-import zstandard as zstd
-
 
 class ParserError(Exception):
     pass
@@ -62,15 +60,23 @@ class Fseq:
         offset = self.frame_offsets[curblock][1]
         self.file.seek(offset, 0)
 
-        dctx = zstd.ZstdDecompressor()
+        if self.compression_type == 'zstd':
+            import zstandard as zstd
+            dctx = zstd.ZstdDecompressor()
 
-        length = self.frame_offsets[curblock + 1][1] - self.frame_offsets[curblock][1]
-        block = self.file.read(length)
-        block = dctx.stream_reader(block).readall()
+            length = self.frame_offsets[curblock + 1][1] - self.frame_offsets[curblock][1]
+            block = self.file.read(length)
+            block = dctx.stream_reader(block).readall()
 
-        fidx = (frame - self.frame_offsets[curblock][0]) * self.channel_count_per_frame
-        data = block[fidx:fidx+self.channel_count_per_frame]
-        return data
+            fidx = (frame - self.frame_offsets[curblock][0]) * self.channel_count_per_frame
+            data = block[fidx:fidx+self.channel_count_per_frame]
+            return data
+        else:
+            block = self.file.read()
+            fidx = frame * self.channel_count_per_frame
+            data = block[fidx:fidx+self.channel_count_per_frame]
+            return data
+        
 
     def _expand_sparse_ranges(self, data):
         # TODO
@@ -105,7 +111,7 @@ def parse(f):
         raise ParserError('unrecognized bit flags: %d' % bit_flags)
 
     compression_type = compression_type_from_num(int_from_bytes(f.read(1)))
-    if compression_type != 'zstd':
+    if compression_type == 'gzip':
         raise ParserError('unsupported compression type: %s' % compression_type)
 
     num_compression_blocks = int_from_bytes(f.read(1))
@@ -119,6 +125,8 @@ def parse(f):
 
     offset = channel_data_start
     frame_offsets = []
+    if compression_type == 'none':
+        frame_offsets.append((0, offset))
     for i in range(num_compression_blocks):
         frame_number = int_from_bytes(f.read(4))
         length_of_block = int_from_bytes(f.read(4))
