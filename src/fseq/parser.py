@@ -95,7 +95,7 @@ def parse(f):
     major_version = int_from_bytes(f.read(1))
 
     version = (major_version, minor_version)
-    if version != (2, 0):
+    if major_version != 2:
         raise ParserError('unrecognized fseq file version: %s' % version)
 
     standard_header_length = int_from_bytes(f.read(2))
