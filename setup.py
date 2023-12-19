@@ -67,7 +67,7 @@ setup(
     ],
     python_requires='>=2.7',
     install_requires=[
-        'zstandard==0.11.0',
+        'zstandard==0.22.0',
     ],
     extras_require={
         # eg:
